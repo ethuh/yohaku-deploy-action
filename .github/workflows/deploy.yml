@@ -147,10 +147,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      # - name: Download artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: dist
+      - name: Checkout deploy-action repo
+        uses: actions/checkout@v4
+        with:
+          path: deploy-action
 
       - name: Restore cached Build Artifacts
         id: cache-primes-restore
@@ -159,11 +159,12 @@ jobs:
           path: |
             assets
           key: ${{ github.run_number }}-release
+
       - name: Move assets to root
         run: mv assets/release.zip release.zip
 
       - name: Prepare standalone PM2 config
-        run: cp pm2/ecosystem.config.js ecosystem.config.js
+        run: cp deploy-action/pm2/ecosystem.config.js ecosystem.config.js
 
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.7
